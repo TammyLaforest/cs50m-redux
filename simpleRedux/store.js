@@ -10,15 +10,26 @@ class Store {
         this.state = this.reducer(this.state, update)
     }
 }
+const DEFAULT_STATE = { user: {}, contact: [] }
 
 const merge = (prev, next) => Object.assign({}, prev, next)
 
-const reducer = (state, update) => merge(state, update)
+const contactReducer = (state, newContact) => [...state, Contact]
 
-const store = new Store(reducer)
+const userReducer = (state, update) => merge(state, update)
 
-store.dispatch({ foo: 'foo' })
-store.dispatch({ bar: 'bar' })
-store.dispatch({ foo: 'baz' })
+const reducer = (state, action) => {
+    if (action.type === "UPDATE_USER") {
+        return merge(
+            state,
+            { user: userReducer(state.user, action.payload) }
+        )
+    } return state
+}
+const store = new Store(reducer, DEFAULT_STATE)
+
+store.dispatch({ type: "UPDATE_USER", payload: { foo: 'foo' } })
+store.dispatch({ type: "UPDATE_USER", payload: { bar: 'bar' } })
+store.dispatch({ type: "UPDATE_USER", payload: { foo: 'baz' } })
 
 console.log(store.getState())

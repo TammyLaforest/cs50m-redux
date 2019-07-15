@@ -1,4 +1,4 @@
-// action types
+// Action types
 const UPDATE_USER = 'UPDATE_USER'
 const UPDATE_CONTACT = 'UPDATE_CONTACT'
 
@@ -17,26 +17,27 @@ class Store {
 const DEFAULT_STATE = { user: {}, contacts: [] }
 const merge = (prev, next) => Object.assign({}, prev, next)
 
-const contactReducer = (state, newContact) => merge(state, newContact)
-const userReducer = (state, update) => merge(state, update)
-
-const reducer = (state, action) => {
-    if (action.type === UPDATE_USER) {
-        return merge(
-            state,
-            { user: userReducer(state.user, action.payload) }
-        )
-    }
+const contactReducer = (state, action) => {
     if (action.type === UPDATE_CONTACT) {
-        return merge(
-            state,
-            { contacts: contactReducer(state.contacts, action.payload) }
-        )
+        return merge(state, action.payload)
     }
-
     return state
 }
 
+const userReducer = (state, action) => {
+    if (action.type === UPDATE_USER) {
+        return merge(state, action.payload)
+    }
+    return state
+}
+
+
+const reducer = (state, action) => ({
+    user: userReducer(state.user, action),
+    contacts: contactReducer(state.contacts, action)
+})
+
+// Action creators
 const updateUser = update => ({
     type: UPDATE_USER,
     payload: update
@@ -54,3 +55,21 @@ store.dispatch(updateUser({ foo: 'baz' }))
 store.dispatch(addContact({ name: 'Tammy', number: '1231231234' }))
 
 console.log(store.getState())
+
+
+// const reducer = (state, action) => {
+//     if (action.type === UPDATE_USER) {
+//         return merge(
+//             state,
+//             { user: userReducer(state.user, action.payload) }
+//         )
+//     }
+//     if (action.type === UPDATE_CONTACT) {
+//         return merge(
+//             state,
+//             { contacts: contactReducer(state.contacts, action.payload) }
+//         )
+//     }
+
+//     return state
+// }
